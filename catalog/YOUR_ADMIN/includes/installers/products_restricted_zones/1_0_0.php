@@ -16,7 +16,7 @@ if ($zc150) { // continue Zen Cart 1.5.0
   // add configuration menu
   if (!zen_page_key_exists('configProductsRestrictedZone')) {
     if ((int)$configuration_group_id > 0) {
-      zen_register_admin_page('configProtsRestrictedZone',
+      zen_register_admin_page('configProductsRestrictedZone',
                               'BOX_CONFIGURATION_PRODUCTS_RESTRICTED_ZONE', 
                               'FILENAME_CONFIGURATION',
                               'gID=' . $configuration_group_id, 
@@ -24,7 +24,7 @@ if ($zc150) { // continue Zen Cart 1.5.0
                               'Y',
                               $configuration_group_id);
         
-      $messageStack->add('Enabled Products REstricted Zone Configuration Menu.', 'success');
+      $messageStack->add('Enabled Products Restricted Zone Configuration Menu.', 'success');
     }
   }
 }
