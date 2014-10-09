@@ -10,3 +10,4 @@
  */
 
 define('TEXT_PRODUCTS_RESTRICTED_ZONE', '%s can not ship to your area.');
+define('TEXT_PRODUCTS_RESTRICTED_REPLACEMENT', 'We are unable to ship %s to your area, we have replaced it with %s which we can ship to your area for you.');

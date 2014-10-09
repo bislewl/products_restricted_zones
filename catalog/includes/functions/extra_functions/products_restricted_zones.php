@@ -79,3 +79,17 @@ function product_restricted_find_geo_zones($zone_id){
     }
     return $geo_zones;
 }
+
+function product_restricted_replace($product_id) {
+    global $db;
+    if (PRODUCTS_RESTRICTED_REPLACE == 'true') {
+        $current_model = zen_products_lookup($product_id, 'products_model');
+        $new_model = $db->Execute("SELECT products_id FROM " . TABLE_PRODUCTS . " WHERE products_model='" . $current_model . PRODUCTS_RESTRICTED_REPLACE_MODEL_SUFFIX . "'");
+        if ($new_model->RecordCount() > 0) {
+            $return = (int) $new_model->fields['products_id'];
+        }
+    } else {
+        $return = 0;
+    }
+    return $return;
+}

@@ -20,8 +20,8 @@ class productsRestrictedZones extends base {
    */
   function __construct(){
     global $zco_notifier;
-    $zco_notifier->attach($this, array('NOTIFY_HEADER_START_CHECKOUT','NOTIFY_HEADER_START_CHECKOUT_SHIPPING'));
-  }
+    $zco_notifier->attach($this, array('NOTIFY_HEADER_START_CHECKOUT', 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING', 'NOTIFY_HEADER_START_SHOPPING_CART'));
+    }
   /**
    * Update Method
    *
@@ -41,21 +41,39 @@ class productsRestrictedZones extends base {
         
             foreach($cartProducts as $product )
             {
-                $product_id = $product['id'];
-                    if(product_restricted_zone_only($product_id,$customers_zone) == false){
+                $product_ided = explode(":", $product['id']);
+                $product_id = $product_ided[0];
+                $product_qty = $product['qty'];
+                $product_attrs = $product['attributes'];
+                if (product_restricted_zone_only($product_id, $customers_zone) == false) {
+                    $replaced_product = product_restricted_replace($product_id);
+                    if ($replaced_product == 0) {
                         $error_text = sprintf(TEXT_PRODUCTS_RESTRICTED_ZONE, zen_get_products_name($product_id));
                         $messageStack->add('shopping_cart', $error_text . '<br />', 'caution');
-                        
-                        zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-                        return;
+                    } else {
+                        $_SESSION['cart']->remove($product_id);
+                        $_SESSION['cart']->add_cart($replaced_product, $product_qty, $product_attrs, false);
+                        $error_text = sprintf(TEXT_PRODUCTS_RESTRICTED_REPLACEMENT, zen_get_products_name($product_id), zen_get_products_name($replaced_product));
+                        $messageStack->add('shopping_cart', $error_text . '<br />', 'caution');
                     }
-                    if(product_restricted_zone_cant($product_id,$customers_zone) == true){
+                    //zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+                    return;
+                    }
+
+                if (product_restricted_zone_cant($product_id, $customers_zone) == false) {
+                    $replaced_product = product_restricted_replace($product_id);
+                    if ($replaced_product == 0) {
                         $error_text = sprintf(TEXT_PRODUCTS_RESTRICTED_ZONE, zen_get_products_name($product_id));
                         $messageStack->add('shopping_cart', $error_text . '<br />', 'caution');
-                        
-                        zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-                        return;
+                    } else {
+                        $_SESSION['cart']->remove($product_id);
+                        $_SESSION['cart']->add_cart($replaced_product, $product_qty, $product_attrs, false);
+                        $error_text = sprintf(TEXT_PRODUCTS_RESTRICTED_REPLACEMENT, zen_get_products_name($product_id), zen_get_products_name($replaced_product));
+                        $messageStack->add('shopping_cart', $error_text . '<br />', 'caution');
                     }
+                    //zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+                    return;
+                }
             }
             
             return;
